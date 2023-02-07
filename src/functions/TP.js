@@ -1,3 +1,8 @@
+/**
+ * Time formatter.
+ * @param {Number} ts Time in milliseconds.
+ * @returns {String} Time formatted.
+ */
 function tp (ts) {
   let h,
   m,

@@ -22,39 +22,38 @@ const {
 
 const SoundCloudClient = require('./SoundCloudClient.js');
 
-// This is a global client
+/**
+ * It is recommended to define as "client.player" in your bot.
+ * @class
+ */
 class Player extends AudioPlayer {
   constructor (options = {
     debug: false
   }) {
     super(options);
-
-    // If the folder for the tracks no exist, this can create.
     if (!fs.existsSync(createRoute())) fs.mkdirSync(createRoute());
-
+    
     this.client = new SoundCloudClient();
     this.connections = [];
     this.players = [];
   }
-
-  // Volume setters and getters.
-  set volume (volume) {
-    this.data.volume = volume;
-    return this;
-  }
-  get volume () {
-    return this.data.volume;
-  }
-
-  getPlaylist (interaction, cb) {
+  
+  /**
+   * Get the guild player playlist.
+   * @param {Object} interaction Interaction object (Message|Interaction).
+   */
+  getPlaylist (interaction) {
     return cb((this.players
       .find(x => x.metadata.guildId === interaction.guild.id) || {
         playlist: []}).playlist);
   }
-
-  // Connection
-  async connect (PlayerConnectionOptions, id) {
-    let find = (this.connections.find(x => x.joinConfig.guildId === id));
+  
+  /**
+   * Find or create a connection.
+   * @param {Object} PlayerConnectionOptions PlayerConnectionOptions.
+   */
+  async connect (PlayerConnectionOptions) {
+    let find = (this.connections.find(x => x.joinConfig.guildId === PlayerConnectionOptions.guildId));
     if (find) {
       return find;
     } else {
@@ -64,7 +63,11 @@ class Player extends AudioPlayer {
       return connection;
     }
   }
-
+  
+  /**
+   * Get or create a AudioPlayer.
+   * @param {Object} interaction Interaction object (Message|Interaction).
+   */
   async createPlayer (interaction) {
     let find = (this.players.find(x => x.guildId === interaction.guild.id));
     if (find) {
@@ -101,7 +104,12 @@ class Player extends AudioPlayer {
       return player;
     }
   }
-
+  
+  /**
+   * Play a song.
+   * @param {String} query Song title or playlist link.
+   * @param {Object} interaction Interaction object (Message|Interaction).
+   */
   async play (query,
     interaction) {
     this
@@ -132,7 +140,13 @@ class Player extends AudioPlayer {
       });
 
   }
-
+  
+  /**
+   * Search a song or playlist.
+   * @param {String} query Song title or playlist link.
+   * @param {Object} interaction Interaction object (Message|Interaction).
+   * @param {search~Callback} cb - The callback that handles the response
+   */
   async search (query,
     interaction,
     cb) {
@@ -164,7 +178,18 @@ class Player extends AudioPlayer {
       .catch(err => console.log(err));
     }
   }
+  /**
+   * @callback search~Callback
+   * @param {String} FilePath
+   * @param {string} SongInfo
+   */
 
+  /**
+   * Search a playlist.
+   * @param {String} query playlist link or title.
+   * @param {Object} interaction Interaction object (Message|Interaction).
+   * @param {searchPlaylist~Callback} cb - The callback that handles the response
+   */
   async searchPlaylist (query,
     interaction,
     cb) {
@@ -206,13 +231,22 @@ class Player extends AudioPlayer {
       });
     }
   }
-
+  
+  /**
+   * Pause music playback.
+   * @param {Object} interaction Interaction object (Message|Interaction).
+   */
   pause (interaction) {
     let myPlayer = this.players.find(x => x.metadata.guildId === interaction.guild.id);
     myPlayer.pause();
     console.log(myPlayer.playlist);
     this.emit(Events.PAUSE, interaction.channel);
   }
+  
+  /**
+   * Resumes music playback.
+   * @param {Object} interaction Interaction object (Message|Interaction).
+   */
   async resume (interaction) {
     let myPlayer = this.players.find(x => x.metadata.guildId === interaction.guild.id);
 
@@ -220,7 +254,10 @@ class Player extends AudioPlayer {
     console.log(myPlayer.playlist);
     this.emit(Events.RESUME, interaction.channel);
   }
-
+  /**
+   * Skip to the next song.
+   * @param {Object} interaction Interaction object (Message|Interaction).
+   */
   async skip (interaction) {
     let myPlayer = this.players
     .find(x => x.metadata.guildId === interaction.guild.id) || await this.createPlayer(interaction);

@@ -4,7 +4,7 @@
   "description": "A simple package to play soundtracks from SoundCloud on Discord.",
   "main": "src/index.js",
   "scripts": {
-    "test": "node --version"
+    "docs": "jsdoc -c jsdoc.json -r"
   },
   "repository": {
     "type": "git",
