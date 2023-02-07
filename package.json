@@ -1,0 +1,28 @@
+{
+  "name": "soundcord",
+  "version": "1.0.5-beta",
+  "description": "A simple package to play soundtracks from SoundCloud on Discord.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k1-1960/soundcord.git"
+  },
+  "keywords": [
+    "SoundCloud",
+    "Discord"
+  ],
+  "author": "K1-1960",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/voice": "^0.14.0",
+    "dotenv": "^16.0.3",
+    "soundcloud-scraper": "^5.0.3"
+  },
+  "bugs": {
+    "url": "https://github.com/k1-1960/soundcord/issues"
+  },
+  "homepage": "https://github.com/k1-1960/soundcord#readme"
+}
