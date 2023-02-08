@@ -99,7 +99,6 @@ class Player extends AudioPlayer {
           }
         }
       });
-      console.log(player)
       this.players.push(player);
       return player;
     }
@@ -150,8 +149,6 @@ class Player extends AudioPlayer {
   async search (query,
     interaction,
     cb) {
-    console.log('Passed Query:',
-      query)
     if (query.startsWith('https://soundcloud.com/') || query.startsWith('https://m.soundcloud.com/')) {
       this.searchPlaylist(query, interaction);
     } else {
@@ -168,14 +165,13 @@ class Player extends AudioPlayer {
           .downloadProgressive();
 
           let writer = stream.pipe(fs.createWriteStream(createRoute(interaction.guild.id)));
-          console.log('152-', song);
           song.title = song.title.replace('.mp3', '');
           song.duration = tp(song.duration);
           writer.on('finish', () => cb(createRoute(interaction.guild.id), song));
         })
-        .catch(err => console.log(err));
+        .catch(err => console.error('[Soundcord Error] — ', err));
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error('[Soundcord Error] — ', err));
     }
   }
   /**
@@ -239,7 +235,6 @@ class Player extends AudioPlayer {
   pause (interaction) {
     let myPlayer = this.players.find(x => x.metadata.guildId === interaction.guild.id);
     myPlayer.pause();
-    console.log(myPlayer.playlist);
     this.emit(Events.PAUSE, interaction.channel);
   }
   
@@ -251,7 +246,6 @@ class Player extends AudioPlayer {
     let myPlayer = this.players.find(x => x.metadata.guildId === interaction.guild.id);
 
     myPlayer.unpause();
-    console.log(myPlayer.playlist);
     this.emit(Events.RESUME, interaction.channel);
   }
   /**
@@ -261,7 +255,6 @@ class Player extends AudioPlayer {
   async skip (interaction) {
     let myPlayer = this.players
     .find(x => x.metadata.guildId === interaction.guild.id) || await this.createPlayer(interaction);
-    console.log('PL:', myPlayer.playlist);
     let npsong = myPlayer.playlist.shift();
 
     if (typeof npsong === "string") {
